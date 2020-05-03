@@ -128,6 +128,6 @@ jobs:
           VERSION: ${{ env.VERSION }}
         with:
           name: thepiconerd/mediaproxy-server/mediaproxy-server
-          username: ${{ GITHUB_ACTOR }}
+          username: $GITHUB_ACTOR
           password: ${{ secrets.GITHUB_TOKEN }}
           tags: "latest,v${{ env.VERSION }}"
