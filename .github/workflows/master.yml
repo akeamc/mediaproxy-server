@@ -133,6 +133,7 @@ jobs:
         env:
           VERSION: ${{ env.VERSION }}
         with:
-          name: thepiconerd/mediaproxy-server/mediaproxy-server
-          password: ${{ secrets.GITHUB_TOKEN }}
+          name: thepiconerd/mediaproxy-server
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
           tags: "latest,v${{ env.VERSION }}"
