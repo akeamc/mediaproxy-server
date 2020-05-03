@@ -69,6 +69,7 @@ jobs:
           args: -- -D warnings
 
   build-linux:
+    name: Build Linux
     needs:
       - check
       - test
@@ -99,6 +100,7 @@ jobs:
           path: ./target/release/mediaproxy-server
 
   upload:
+    name: Upload
     needs:
       - build-linux
     runs-on: ubuntu-latest
