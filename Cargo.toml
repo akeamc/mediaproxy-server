@@ -1,6 +1,6 @@
 [package]
 name = "mediaproxy-server"
-version = "0.1.1"
+version = "0.1.0"
 authors = ["Åke Amcoff <ake.amcoff@gmail.com>"]
 edition = "2018"
 
