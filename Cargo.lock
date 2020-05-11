@@ -1140,9 +1140,9 @@ checksum = "60302e4db3a61da70c0cb7991976248362f30319e88850c487b9b95bbf059e00"
 
 [[package]]
 name = "mediaproxy-common"
-version = "0.1.0"
+version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "70229fb6c528dc6dd924ed9d589961c7bb749fe959596bfc25c85e63777dd398"
+checksum = "394fe19dd148fafc9073a88a4082fe843107f676665167927674b82778fe239a"
 dependencies = [
  "base64 0.12.0",
  "custom_error",
@@ -1152,7 +1152,7 @@ dependencies = [
 
 [[package]]
 name = "mediaproxy-server"
-version = "0.1.1"
+version = "0.1.0"
 dependencies = [
  "actix-rt",
  "actix-web",
