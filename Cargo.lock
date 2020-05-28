@@ -596,9 +596,9 @@ dependencies = [
 
 [[package]]
 name = "dns-lookup"
-version = "1.0.2"
+version = "1.0.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8ea427e983abd535e5ea03dcf395b3a7ae4546f908c8c9e59cca36cf968f82ce"
+checksum = "4cbea23c15f7e685a7ad01c994407f3849fa7c88556aaafe4054215b6df93f78"
 dependencies = [
  "libc",
  "socket2",
@@ -1156,7 +1156,7 @@ dependencies = [
 
 [[package]]
 name = "mediaproxy-server"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "actix-rt",
  "actix-web",
