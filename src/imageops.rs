@@ -1,8 +1,6 @@
 use image::{DynamicImage, GenericImageView, ImageOutputFormat};
-use libwebp_sys::WebPEncodeRGB;
 use mediaproxy_common::query::ImageProcessingOutput;
 use num::clamp;
-use std::os::raw::{c_float, c_int};
 use std::str::FromStr;
 use std::time::Instant;
 
@@ -49,22 +47,12 @@ pub mod to_bytes {
         Ok(result)
     }
 
-    fn webp(img: &DynamicImage, quality: u16) -> Result<Vec<u8>, image::ImageError> {
+    /// This implementation of WebP REALLY dislikes RGBA (but the glitched images do turn out quite cool). Therefore, all translucent images must be converted to non-translucent images before proceeding (RGBA -> RGB).
+    fn webp(img: &DynamicImage, quality: f32) -> Result<Vec<u8>, image::ImageError> {
         let (width, height) = img.dimensions();
-        let stride = width * 3;
-        let mut output: *mut u8 = std::ptr::null_mut();
-        unsafe {
-            let length = WebPEncodeRGB(
-                img.to_bytes().as_slice().as_ptr(),
-                width as c_int,
-                height as c_int,
-                stride as c_int,
-                quality as c_float,
-                &mut output,
-            );
-            let vec = Vec::from_raw_parts(output, length, length);
-            Ok(vec)
-        }
+        let rgb = img.to_rgb();
+        let encoded = webp::Encoder::from_rgb(&rgb, width, height).encode(quality);
+        Ok(encoded.to_vec())
     }
 
     pub fn image(
@@ -74,7 +62,7 @@ pub mod to_bytes {
         match format {
             ImageProcessingOutput::Jpeg => default_image_format(img, ImageOutputFormat::Jpeg(80)),
             ImageProcessingOutput::Png => default_image_format(img, ImageOutputFormat::Png),
-            ImageProcessingOutput::WebP => webp(img, 80),
+            ImageProcessingOutput::WebP => webp(img, 90.0),
             ImageProcessingOutput::Gif => default_image_format(img, ImageOutputFormat::Gif),
         }
     }
