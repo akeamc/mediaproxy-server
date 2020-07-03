@@ -7,8 +7,13 @@ use url::Url;
 
 custom_error! {pub HandleQueryError
   FetchError{source: fetching::FetchError} = "Something went wrong when fetching the source image.",
-  ImageError{source: image::error::ImageError} = "Something went wrong when processing the image.",
+  ImageError{source: image::error::ImageError} = "Something went wrong when processing the image",
   InputError{source: url::ParseError} = "Invalid input!",
+}
+
+fn log_error(source_url: String, error_msg: String) {
+    println!("{}", error_msg);
+    println!("Source: {}", source_url);
 }
 
 pub struct Response {
@@ -25,7 +30,13 @@ pub fn handle_query(query: Query) -> Result<Response, HandleQueryError> {
     let media_type = imageops::get_media_type(&query.format);
 
     Ok(Response {
-        bytes: imageops::to_bytes::image(&result.img, query.format)?,
+        bytes: match imageops::to_bytes::image(&result.img, query.format) {
+            Ok(bytes) => bytes,
+            Err(error) => {
+                log_error(query.source, error.to_string());
+                return Err(HandleQueryError::ImageError { source: error });
+            }
+        },
         content_type: ContentType(media_type),
     })
 }

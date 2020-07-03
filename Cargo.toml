@@ -1,6 +1,6 @@
 [package]
 name = "mediaproxy-server"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["Åke Amcoff <ake.amcoff@gmail.com>"]
 edition = "2018"
 
@@ -15,9 +15,9 @@ serde_json = "1.0"
 url = "2"
 futures = "0.3"
 mime = "0.3"
-num = "0.2"
+num = "0.3"
 custom_error = "1.7"
-libwebp-sys = "0.3"
+webp = "0.1"
 dns-lookup = "1.0"
 clap = "2"
 mediaproxy-common = "0.1"

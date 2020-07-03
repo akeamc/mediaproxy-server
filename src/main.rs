@@ -36,10 +36,13 @@ fn mediaproxy(fingerprint: web::Path<String>) -> HttpResponse {
                 handler::HandleQueryError::InputError { .. } => {
                     (StatusCode::BAD_REQUEST, "The input is malformed.")
                 }
-                _ => (
-                    StatusCode::INTERNAL_SERVER_ERROR,
-                    "An unknown error occurred.",
-                ),
+                _ => {
+                    println!("{}", error);
+                    (
+                        StatusCode::INTERNAL_SERVER_ERROR,
+                        "An unknown error occurred.",
+                    )
+                }
             };
             HttpResponse::build(status).body(body)
         }
