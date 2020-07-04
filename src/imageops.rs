@@ -50,8 +50,8 @@ pub mod to_bytes {
     /// This implementation of WebP REALLY dislikes RGBA (but the glitched images do turn out quite cool). Therefore, all translucent images must be converted to non-translucent images before proceeding (RGBA -> RGB).
     fn webp(img: &DynamicImage, quality: f32) -> Result<Vec<u8>, image::ImageError> {
         let (width, height) = img.dimensions();
-        let rgb = img.to_rgb();
-        let encoded = webp::Encoder::from_rgb(&rgb, width, height).encode(quality);
+        let rgba = img.to_rgba();
+        let encoded = webp::Encoder::from_rgba(&rgba, width, height).encode(quality);
         Ok(encoded.to_vec())
     }
 
