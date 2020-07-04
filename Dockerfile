@@ -1,11 +1,9 @@
 FROM ekidd/rust-musl-builder:nightly-2020-04-10 AS builder
-WORKDIR /usr/src/app
-COPY Cargo.lock .
-COPY Cargo.toml .
-RUN mkdir .cargo
-RUN cargo vendor > .cargo/config
-
-COPY ./src src
+RUN USER=rust cargo init
+COPY --chown=rust:rust Cargo.* ./
+RUN cargo build --release
+RUN rm -r target/x86_64-unknown-linux-musl/release/deps/mediaproxy_server*
+COPY --chown=rust:rust . .
 RUN cargo build --release
 
 FROM alpine:latest
