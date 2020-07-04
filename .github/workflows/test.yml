@@ -1,13 +1,7 @@
-name: Push Request Testing
+name: Testing
 on:
   push:
-    branches:
-      - '*'         # matches every branch
-      - '*/*'       # matches every branch containing a single '/'
-      - '!master'   # excludes master
   pull_request:
-    branches:
-      - master
 
 jobs:
   check:
@@ -20,6 +14,13 @@ jobs:
           profile: minimal
           toolchain: nightly
           override: true
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
       - uses: actions-rs/cargo@v1
         with:
           command: check
@@ -72,6 +73,13 @@ jobs:
           toolchain: nightly
           override: true
       - run: rustup component add clippy
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
       - uses: actions-rs/cargo@v1
         with:
           command: clippy
