@@ -17,7 +17,7 @@ jobs:
         id: wait-for-tests
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          checkName: test
+          checkName: CI Tests
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       - name: Verify successful tests
