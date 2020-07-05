@@ -113,7 +113,7 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-cargo-release-${{ hashFiles('**/Cargo.lock') }}
       - uses: actions-rs/cargo@v1
         with:
           command: build
@@ -181,3 +181,17 @@ jobs:
           prerelease: false
           files: |
             linux/mediaproxy-server
+  
+  update_chart:
+    name: Update chart
+    needs:
+      - upload
+      - docker
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger chart update
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.MEDIAPROXY_PAT }}
+          event-type: image_pushed
+          repository: ThePicoNerd/mediaproxy
