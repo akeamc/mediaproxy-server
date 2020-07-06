@@ -25,7 +25,12 @@ pub fn handle_query(query: Query) -> Result<Response, HandleQueryError> {
     let url = Url::parse(query.source.as_str())?;
     let original = fetching::fetch_dynimage(url)?;
 
-    let result = imageops::resize(&original.img, query.width, query.height);
+    let result = imageops::resize(
+        &original.img,
+        query.fit_mode.unwrap_or_default(),
+        query.width,
+        query.height,
+    );
 
     let media_type = imageops::get_media_type(&query.format);
 
