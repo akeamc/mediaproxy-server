@@ -1,5 +1,5 @@
 use image::{DynamicImage, GenericImageView, ImageOutputFormat};
-use mediaproxy_common::query::ImageProcessingOutput;
+use mediaproxy_common::{OutputFormat, ResizeStrategy};
 use num::clamp;
 use std::str::FromStr;
 use std::time::Instant;
@@ -13,11 +13,25 @@ pub struct ResizeResponse {
     pub performance: Performance,
 }
 
-pub fn resize(img: &DynamicImage, width: Option<u32>, height: Option<u32>) -> ResizeResponse {
+pub fn resize(
+    img: &DynamicImage,
+    strategy: ResizeStrategy,
+    width: Option<u32>,
+    height: Option<u32>,
+) -> ResizeResponse {
     let start = Instant::now();
+
     let nwidth = clamp(width.unwrap_or_else(|| img.width()), 1, MAX_IMAGE_SIZE);
     let nheight = clamp(height.unwrap_or_else(|| img.height()), 1, MAX_IMAGE_SIZE);
-    let resized = img.thumbnail(nwidth, nheight);
+
+    let resized: DynamicImage = match strategy {
+        ResizeStrategy::Contain => img.thumbnail(nwidth, nheight),
+        ResizeStrategy::Crop => {
+            img.resize_to_fill(nwidth, nheight, image::imageops::FilterType::Triangle)
+        }
+        ResizeStrategy::Stretch => img.thumbnail_exact(nwidth, nheight),
+    };
+
     ResizeResponse {
         img: resized,
         performance: Performance {
@@ -26,12 +40,12 @@ pub fn resize(img: &DynamicImage, width: Option<u32>, height: Option<u32>) -> Re
     }
 }
 
-pub fn get_media_type(output: &ImageProcessingOutput) -> mime::Mime {
+pub fn get_media_type(output: &OutputFormat) -> mime::Mime {
     match output {
-        ImageProcessingOutput::Jpeg => mime::IMAGE_JPEG,
-        ImageProcessingOutput::Png => mime::IMAGE_PNG,
-        ImageProcessingOutput::WebP => mime::Mime::from_str("image/webp").unwrap(),
-        ImageProcessingOutput::Gif => mime::IMAGE_GIF,
+        OutputFormat::Jpeg => mime::IMAGE_JPEG,
+        OutputFormat::Png => mime::IMAGE_PNG,
+        OutputFormat::WebP => mime::Mime::from_str("image/webp").unwrap(),
+        OutputFormat::Gif => mime::IMAGE_GIF,
     }
 }
 
@@ -47,7 +61,6 @@ pub mod to_bytes {
         Ok(result)
     }
 
-    /// This implementation of WebP REALLY dislikes RGBA (but the glitched images do turn out quite cool). Therefore, all translucent images must be converted to non-translucent images before proceeding (RGBA -> RGB).
     fn webp(img: &DynamicImage, quality: f32) -> Result<Vec<u8>, image::ImageError> {
         let (width, height) = img.dimensions();
         let rgba = img.to_rgba();
@@ -57,13 +70,13 @@ pub mod to_bytes {
 
     pub fn image(
         img: &DynamicImage,
-        format: ImageProcessingOutput,
+        format: OutputFormat,
     ) -> Result<Vec<u8>, image::error::ImageError> {
         match format {
-            ImageProcessingOutput::Jpeg => default_image_format(img, ImageOutputFormat::Jpeg(80)),
-            ImageProcessingOutput::Png => default_image_format(img, ImageOutputFormat::Png),
-            ImageProcessingOutput::WebP => webp(img, 90.0),
-            ImageProcessingOutput::Gif => default_image_format(img, ImageOutputFormat::Gif),
+            OutputFormat::Jpeg => default_image_format(img, ImageOutputFormat::Jpeg(80)),
+            OutputFormat::Png => default_image_format(img, ImageOutputFormat::Png),
+            OutputFormat::WebP => webp(img, 90.0),
+            OutputFormat::Gif => default_image_format(img, ImageOutputFormat::Gif),
         }
     }
 }
