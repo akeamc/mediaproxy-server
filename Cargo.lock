@@ -986,9 +986,9 @@ dependencies = [
 
 [[package]]
 name = "image"
-version = "0.23.6"
+version = "0.23.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b5b0553fec6407d63fe2975b794dfb099f3f790bdc958823851af37b26404ab4"
+checksum = "974e194911d1f7efe3cd8a8f9db3b767e43536327e899e8bc9a12ef5711b74d2"
 dependencies = [
  "bytemuck",
  "byteorder",
@@ -1191,7 +1191,7 @@ dependencies = [
  "custom_error",
  "dns-lookup",
  "futures",
- "image 0.23.6",
+ "image 0.23.9",
  "mediaproxy-common",
  "mime",
  "num",
